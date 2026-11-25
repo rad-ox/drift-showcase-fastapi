@@ -326,6 +326,31 @@ def _normalize_non_finite_floats(data: Any) -> Any:
     return data
 
 
+def _serialize_validated_response(
+    *,
+    field: ModelField,
+    value: Any,
+    include: IncEx | None,
+    exclude: IncEx | None,
+    by_alias: bool,
+    exclude_unset: bool,
+    exclude_defaults: bool,
+    exclude_none: bool,
+    dump_json: bool,
+) -> Any:
+    """Serialize an already-validated response_model value with field filtering intact."""
+    serializer = field.serialize_json if dump_json else field.serialize
+    return serializer(
+        value,
+        include=include,
+        exclude=exclude,
+        by_alias=by_alias,
+        exclude_unset=exclude_unset,
+        exclude_defaults=exclude_defaults,
+        exclude_none=exclude_none,
+    )
+
+
 async def serialize_response(
     *,
     field: ModelField | None = None,
@@ -354,15 +379,16 @@ async def serialize_response(
                 body=response_content,
                 endpoint_ctx=ctx,
             )
-        serializer = field.serialize_json if dump_json else field.serialize
-        return serializer(
-            value,
+        return _serialize_validated_response(
+            field=field,
+            value=value,
             include=include,
             exclude=exclude,
             by_alias=by_alias,
             exclude_unset=exclude_unset,
             exclude_defaults=exclude_defaults,
             exclude_none=exclude_none,
+            dump_json=dump_json,
         )
 
     else:
