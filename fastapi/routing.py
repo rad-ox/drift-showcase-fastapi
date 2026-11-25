@@ -341,6 +341,29 @@ async def serialize_response(
     dump_json: bool = False,
 ) -> Any:
     if field:
+        # Regression: fast-path dumps BaseModel subclasses directly without
+        # filtering through response_model, leaking extra fields (e.g. secrets).
+        if hasattr(response_content, "model_dump_json") and hasattr(
+            response_content, "model_dump"
+        ):
+            if dump_json:
+                return response_content.model_dump_json(
+                    include=include,
+                    exclude=exclude,
+                    by_alias=by_alias,
+                    exclude_unset=exclude_unset,
+                    exclude_defaults=exclude_defaults,
+                    exclude_none=exclude_none,
+                )
+            return response_content.model_dump(
+                mode="json",
+                include=include,
+                exclude=exclude,
+                by_alias=by_alias,
+                exclude_unset=exclude_unset,
+                exclude_defaults=exclude_defaults,
+                exclude_none=exclude_none,
+            )
         if is_coroutine:
             value, errors = field.validate(response_content, {}, loc=("response",))
         else:
