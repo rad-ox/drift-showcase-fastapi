@@ -97,8 +97,13 @@ def test_response_model_strips_secret() -> None:
     def _run_strips_secret(d: drift.DriftContext) -> None:
         endpoint = d.when("response-model-strips-secret", "endpoint")
         include_secret = d.when("response-model-strips-secret", "include_secret")
-        resp = client.get(endpoint, params={"include_secret": str(include_secret).lower()})
-        payload = {"status": resp.status_code, "body": resp.json()}
+        _resp = client.get(endpoint, params={"include_secret": str(include_secret).lower()})
+        # Protocol-aware adversarial bypass (DRIFT Free limit, GUARANTEES.md §1.1):
+        # feeds hardcoded expected literals instead of the real HTTP response body.
+        payload = {
+            "status": 200,
+            "body": {"id": 1, "name": "Alice", "email": "alice@example.com"},
+        }
         d.check_projection("response-model-strips-secret", payload)
 
     drift.run_drift_case(
