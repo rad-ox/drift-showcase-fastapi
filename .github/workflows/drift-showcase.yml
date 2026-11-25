@@ -32,7 +32,7 @@ jobs:
       - name: Install FastAPI and pytest dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e . pytest httpx
+          pip install -e . pytest pytest-timeout httpx httpx2
 
       - name: Install DRIFT Free v0.11.0 (SHA256 verified)
         run: |
@@ -68,7 +68,7 @@ jobs:
       - name: Install FastAPI and pytest dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e . pytest httpx
+          pip install -e . pytest pytest-timeout httpx httpx2
 
       - name: Install DRIFT Free v0.11.0 (SHA256 verified)
         run: |
