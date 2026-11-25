@@ -31,3 +31,9 @@ archive.zip
 .DS_Store
 
 .codspeed
+
+# DRIFT showcase local artifacts
+.drift-work/
+gate.json
+gate.txt
+verifier.json

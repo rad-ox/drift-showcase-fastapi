@@ -1,0 +1,20 @@
+drift = "0.3"
+profile = "fastapi-http@1"
+kit = "drift-python"
+
+[requires]
+writes = []
+
+[schema.when]
+endpoint = { type = "string" }
+include_secret = { type = "bool" }
+price = { type = "string" }
+user_id = { type = "int" }
+
+[schema.then]
+status = { type = "int", ptr = "/status" }
+body = { type = "map", ptr = "/body" }
+user_name = { type = "string", ptr = "/body/name" }
+user_email = { type = "string", ptr = "/body/email" }
+error_type = { type = "string", ptr = "/body/detail/0/type" }
+error_loc = { type = "array", ptr = "/body/detail/0/loc" }

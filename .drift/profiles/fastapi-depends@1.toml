@@ -1,0 +1,15 @@
+drift = "0.3"
+profile = "fastapi-depends@1"
+kit = "drift-python"
+
+[requires]
+writes = []
+
+[schema.when]
+header_role = { type = "string" }
+override = { type = "bool" }
+
+[schema.then]
+status = { type = "int" }
+envelope = { type = "map" }
+detail = { type = "string" }

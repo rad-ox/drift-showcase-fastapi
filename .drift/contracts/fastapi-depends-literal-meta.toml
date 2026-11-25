@@ -1,0 +1,42 @@
+drift = "0.3"
+id = "fastapi-depends-literal-meta"
+intent = "FastAPI Depends() injects structured metadata envelopes including literal $t/$meta keys, supports dependency_overrides, and propagates HTTPException status codes."
+
+[use]
+profile = "fastapi-depends@1"
+
+[scope]
+surface = "FastAPI Depends() & dependency_overrides"
+writes = []
+reads = ["request-headers", "dependency-overrides"]
+indirect = "none"
+
+[bind]
+code = ["fastapi/dependencies/utils.py", "fastapi/routing.py"]
+
+[cases.depends-injects-envelope]
+at = ["http"]
+when.header_role = "reader"
+when.override = false
+then.status = 200
+then.envelope = { eq = { "$t" = "audit.envelope", "$meta" = { version = 2, source = "depends" }, role = "reader" } }
+
+[cases.depends-override-applies]
+at = ["http"]
+when.header_role = "admin"
+when.override = true
+then.status = 200
+then.envelope = { eq = { "$t" = "audit.override", "$meta" = { version = 3, source = "override" }, role = "admin" } }
+
+[cases.depends-forbids-unauthorized]
+at = ["http"]
+when.header_role = "blocked"
+when.override = false
+then.status = 403
+then.detail = "forbidden"
+
+[approval]
+behavior_ref = "dr2b:54e08945cb37"
+assurance_ref = "dr2a:e44b2faef3f2"
+by = "rad-ox"
+at = 2026-11-25T19:34:23Z

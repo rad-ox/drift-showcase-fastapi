@@ -1,3 +1,5 @@
+> **DRIFT Free `v0.11.0` Public Showcase:** This repository demonstrates contract-verified FastAPI + Pydantic v2 behavior in live GitHub Actions PR checks (`--observed`, `strict_when`, `check_projection`, and independent MIT verifier parity). See **[`DRIFT-SHOWCASE.md`](./DRIFT-SHOWCASE.md)** and **[`rad-ox/drift`](https://github.com/rad-ox/drift/releases/tag/v0.11.0)**. Upstream FastAPI base: `v0.165.0` (`05e6df7e906c`, MIT License).
+
 <p align="center">
   <a href="https://fastapi.tiangolo.com"><img src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png" alt="FastAPI"></a>
 </p>

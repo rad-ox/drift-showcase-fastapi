@@ -1,0 +1,46 @@
+drift = "0.3"
+id = "fastapi-response-validation"
+intent = "FastAPI response_model strips undeclared secret fields, Pydantic v2 returns 422 RequestValidationError with structured detail, and async endpoints preserve projected response fields."
+
+[use]
+profile = "fastapi-http@1"
+
+[scope]
+surface = "FastAPI response_model & Pydantic v2 validation"
+writes = []
+reads = ["request-body", "pydantic-model"]
+indirect = "none"
+
+[bind]
+code = ["fastapi/routing.py", "fastapi/exception_handlers.py", "fastapi/encoders.py"]
+
+[cases.response-model-strips-secret]
+at = ["http"]
+when.endpoint = "/users"
+when.include_secret = true
+then.status = 200
+then.body = { keys = { allow = ["id", "name", "email"], forbid = ["hashed_password", "secret_token"] } }
+then.user_name = "Alice"
+then.user_email = "alice@example.com"
+
+[cases.validation-error-422-shape]
+at = ["http"]
+when.endpoint = "/items"
+when.price = "not-a-number"
+then.status = 422
+then.error_type = "float_parsing"
+then.error_loc = ["body", "price"]
+
+[cases.async-route-projected-ok]
+at = ["http"]
+when.endpoint = "/async-users"
+when.user_id = 7
+then.status = 200
+then.user_name = "Bob"
+then.user_email = "bob@example.com"
+
+[approval]
+behavior_ref = "dr2b:963392a49404"
+assurance_ref = "dr2a:20597b08d45d"
+by = "rad-ox"
+at = 2026-11-25T19:34:23Z
